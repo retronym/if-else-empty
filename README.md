@@ -45,7 +45,7 @@ This can then pinpoint places where manual edits are required to align the types
 
 What is the inferred type of these expressions?
 
-```
+```scala
 if (cond) Set[String]("") else Set()
 if (cond) Map[String, String]("" -> "") else Map.empty()
 ```
@@ -68,7 +68,7 @@ This repo includes an demonstration of using a DSL to replace the build in `if` 
 a) restricts the type of the result to the type of the first branch and b) has a convenience
 method to create the else branch that returns an empty collection of that type.
 
-```
+```scala
 val s1 = If(false).Then(HashSet(1)).Else(HashSet(2))
 
 val m1 = If(false).Then(Map(1 -> "one")).ElseEmpty
@@ -80,13 +80,13 @@ Could we do the same without needing to discard native control flow?
 
 One idea would be to create a dummy method:
 
-```
+```scala
 @compileTimeOnly("must be eliminated by a compiler plugin")
 def emptyCollection: Nothing = ???
 ```
 
 The user could write code:
-```
+```scala
 if (cond) Set("") else emptyCollection
 ```
 
@@ -94,6 +94,6 @@ This would typecheck as `LUB(Set[String], Nothing) = Set[String]`
 
 A subsequent compiler plugin would then replace the `emptyCollection` call with a call the empty factory method.
 
-```
+```scala
 (if (cond) Set("") else Set.empty[String])
 ```
